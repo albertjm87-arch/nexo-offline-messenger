@@ -6,6 +6,7 @@ on:
     branches:
       - main
       - feature/android-foundation
+      - feature/crystal-messaging
 
 jobs:
   build:
