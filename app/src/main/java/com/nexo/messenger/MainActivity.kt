@@ -1,8 +1,13 @@
 package com.nexo.messenger
 
 import android.os.Bundle
+import android.Manifest
+import android.content.pm.PackageManager
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -18,9 +23,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 
 private val Night = Color(0xFF07111F)
 private val DeepBlue = Color(0xFF102947)
@@ -60,6 +67,7 @@ fun NexoApp() {
     var selectedTab by remember { mutableStateOf("Chats") }
     var selectedChat by remember { mutableStateOf<Chat?>(null) }
     var search by remember { mutableStateOf("") }
+    var showAddContact by remember { mutableStateOf(false) }
 
     val chats = remember {
         mutableStateListOf(
@@ -99,7 +107,8 @@ fun NexoApp() {
                                 messages.clear()
                                 messages.add("¡Hola! Bienvenido a NEXO 👋")
                                 messages.add("Esta conversación está lista para conectarse.")
-                            }
+                            },
+                            onAddContact = { showAddContact = true }
                         )
                     }
                     "Contactos" -> SimplePage(
@@ -140,7 +149,8 @@ fun ChatHome(
     chats: List<Chat>,
     search: String,
     onSearch: (String) -> Unit,
-    onOpenChat: (Chat) -> Unit
+    onOpenChat: (Chat) -> Unit,
+    onAddContact: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -170,10 +180,15 @@ fun ChatHome(
                 )
             }
             GlassPanel(
-                modifier = Modifier.size(48.dp),
+                modifier = Modifier
+                    .size(48.dp)
+                    .clickable { onAddContact() },
                 shape = CircleShape
             ) {
-                Box(contentAlignment = Alignment.Center) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
                     Text("＋", color = Cyan, fontSize = 27.sp)
                 }
             }
